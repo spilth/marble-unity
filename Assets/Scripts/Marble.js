@@ -31,15 +31,11 @@ private var timeRemaining = 0.0;
 private var horizontalAxis = 0.0;
 private var verticalAxis = 0.0;
 
-private var collisionThreshold = -0.2;
-
 private var isDizzy = false;
-private var dizzyOnNextCollision = false;
-private var dizzyThreshold = -6.0;
+private var dizzyThreshold = 1.9;
 private var dizzyDuration = 2.0;
 
-private var breakingThreshold = -7.2;
-private var breakOnNextCollision = false;
+private var breakingThreshold = 2.9;
 
 function Awake() {
 	rigidbody.maxAngularVelocity = angularVelocityCap;
@@ -58,21 +54,29 @@ function Start() {
 	timeRemaining = levelTime + GetCollectedTime();
 }
 
+private var oldContactHeight = 0.0;
+private var newContactHeight = 0.0;
+private var contactDistance = 0.0;
+
 function OnCollisionEnter(collision : Collision) {
-	if (breakOnNextCollision) {
+	newContactHeight = collision.contacts[0].point.y;
+	contactDistance = oldContactHeight - newContactHeight;
+	
+	//Debug.Log("Old: " + oldContactHeight + ", New: " + newContactHeight + ", Distance: " + contactDistance);
+	
+	if (contactDistance > 2.9) {
 		deathTrigger = DeathTrigger.Broke;
-		Die();	
+		Die();
 		return;
 	}
-
-	if (dizzyOnNextCollision) {
+	
+	if (contactDistance > 1.9 && !isDizzy) {
 		BecomeDizzy();
 		return;
 	}
 
-	if (rigidbody.velocity.y < collisionThreshold) {
-		//audio.PlayOneShot(collisionSound);	
-	}
+	oldContactHeight = newContactHeight;
+
 }
 
 function FixedUpdate() {
@@ -93,9 +97,7 @@ function Update () {
 			if (!IsMainMenu()) {
 				timeRemaining -= 1.0 * Time.deltaTime;
 			}
-			
-			FallingCheck();
-			
+						
 			if (!isDizzy) {
 				horizontalAxis = Input.GetAxis("Horizontal");
 		    	verticalAxis = Input.GetAxis("Vertical");
@@ -126,20 +128,6 @@ function Update () {
 				Respawn();
 			}
 			break;
-	}
-}
-
-function FallingCheck() {
-	if (rigidbody.velocity.y < dizzyThreshold) {
-		if (rigidbody.velocity.y < breakingThreshold) {
-			Debug.Log("Fall: " + rigidbody.velocity.y);
-			dizzyOnNextCollision = false;
-			breakOnNextCollision = true;
-
-		} else {
-			Debug.Log("Dizzy: " + rigidbody.velocity.y);
-			dizzyOnNextCollision = true;
-		}	
 	}
 }
 
@@ -179,9 +167,9 @@ function DieFromBreaking() {
 }
 
 function BecomeDizzy() {
-	dizzyOnNextCollision = false;
 	isDizzy = true;
 	audio.PlayOneShot(dizzySound);
+	//var instantiatedExplosion : Object = Instantiate(explosion, transform.position, transform.rotation);
 	yield WaitForSeconds(dizzyDuration);
 	isDizzy = false;
 }
@@ -204,7 +192,7 @@ function Die() {
 			
 			// TODO: Figure out how to make this work with pragma strict
 			var instantiatedExplosion : Object = Instantiate(explosion, transform.position, transform.rotation);
-			Object.Destroy(instantiatedExplosion, 3);
+			//Object.Destroy(instantiatedExplosion, 3);
 			//audio.PlayOneShot(breakingSound);
 			break;				
 	}
