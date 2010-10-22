@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.54.0 r31878</authoring_tool>
+    </contributor>
+    <created>2010-10-08T08:58:18</created>
+    <modified>2010-10-08T08:58:18</modified>
+    <unit name="decimetre" meter="0.1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_cameras/>
+  <library_lights/>
+  <library_images/>
+  <library_effects>
+    <effect id="Material-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.800000011921 0.800000011921 0.800000011921 1</color>
+            </diffuse>
+            <reflective>
+              <color>1 1 1 1</color>
+            </reflective>
+            <reflectivity>
+              <float>0.5</float>
+            </reflectivity>
+            <transparent>
+              <color>0 0 0 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+            <index_of_refraction>
+              <float>1</float>
+            </index_of_refraction>
+          </lambert>
+          <extra/>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <show_double_sided>1</show_double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Material" name="Material">
+      <instance_effect url="#Material-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Ramp-mesh">
+      <mesh>
+        <source id="Ramp-mesh-positions">
+          <float_array id="Ramp-mesh-positions-array" count="18">1 0.999999940395 -1 1 -1 -1 -1 -0.999999821186 -1 -0.999999642372 1 -1 -0.999999940395 1 1 -1.000001 -1.000001 1</float_array>
+          <technique_common>
+            <accessor source="#Ramp-mesh-positions-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Ramp-mesh-normals">
+          <float_array id="Ramp-mesh-normals-array" count="15">0 0 -1 0.70710670948 -1.26441e-7 0.707106828689 0 -1 -3.8743e-7 -1 3.12924e-7 -2.23517e-7 2.08616e-7 1 1.78814e-7</float_array>
+          <technique_common>
+            <accessor source="#Ramp-mesh-normals-array" count="5" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Ramp-mesh-vertices">
+          <input semantic="POSITION" source="#Ramp-mesh-positions"/>
+        </vertices>
+        <polylist material="Material" count="5">
+          <input semantic="VERTEX" source="#Ramp-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Ramp-mesh-normals" offset="1"/>
+          <vcount>4 4 3 4 3 </vcount>
+          <p>0 0 1 0 2 0 3 0 0 1 4 1 5 1 1 1 1 2 5 2 2 2 2 3 5 3 4 3 3 3 4 4 0 4 3 4</p>
+        </polylist>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_animations/>
+  <library_controllers/>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Ramp" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Ramp-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Material" target="#Material"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>
