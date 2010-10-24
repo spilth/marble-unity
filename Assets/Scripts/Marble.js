@@ -15,6 +15,7 @@ var timerTexture : Texture;
 var timerBackground : Texture;
 
 var customSkin : GUISkin;
+var dizziness : GameObject;
 var explosion : GameObject;
 
 enum GameState {Waiting, Playing, Finished, Dead}
@@ -169,7 +170,7 @@ function DieFromBreaking() {
 function BecomeDizzy() {
 	isDizzy = true;
 	audio.PlayOneShot(dizzySound);
-	//var instantiatedExplosion : Object = Instantiate(explosion, transform.position, transform.rotation);
+	var instantiatedDizziness : Object = Instantiate(dizziness, transform.position, transform.rotation);
 	yield WaitForSeconds(dizzyDuration);
 	isDizzy = false;
 }
@@ -273,9 +274,9 @@ function DrawWaitingGUI() {
 		GUI.Label (Rect (0,10,Screen.width,50), levelName);
 		GUI.Label (Rect (0,50,Screen.width,50), "Level  " + levelTime + "  seconds");
 		if (!IsFirstLevel()) {
-			GUI.Label (Rect (0,90,Screen.width,50), "Collected  " + GetCollectedTime() + "  seconds");
+			GUI.Label (Rect (0,90,Screen.width,50), "Collected  " + parseInt(GetCollectedTime()) + "  seconds");
 		}
-		GUI.Label (Rect (0,130,Screen.width,50), "Total  " + timeRemaining + "  seconds");
+		GUI.Label (Rect (0,130,Screen.width,50), "Total  " + parseInt(timeRemaining) + "  seconds");
 		GUI.Label (Rect (0,170,Screen.width,50), "Press  Space  to  Start");	
 	}
 }
