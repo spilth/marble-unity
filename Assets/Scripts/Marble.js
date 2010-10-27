@@ -3,6 +3,7 @@
 var levelName = "NO NAME";	// Name of level displayed at level start.
 var levelTime = 10.0;
 var levelMusic : AudioClip;
+var disableTimer : boolean;
 
 var breakingSound : AudioClip;
 var collisionSound : AudioClip;
@@ -21,6 +22,9 @@ var explosion : GameObject;
 enum GameState {Waiting, Playing, Finished, Dead}
 enum DeathTrigger {OutOfTime, Falling, Broke}
 
+private var guts : GameObject;
+private var shadow : GameObject;
+
 private var gameState = GameState.Waiting;
 private var deathTrigger = DeathTrigger.OutOfTime;
 
@@ -37,14 +41,17 @@ private var dizzyThreshold = 1.9;
 private var dizzyDuration = 2.0;
 
 private var breakingThreshold = 2.9;
+private var breakingDuration = 2.0;
 
 function Awake() {
 	rigidbody.maxAngularVelocity = angularVelocityCap;
 	audio.clip = levelMusic;
+	guts = GameObject.Find("Marble/Guts");
+	shadow = GameObject.Find("Marble/Shadow");
 }
 
 function Start() {
-	if (IsMainMenu()) {
+	if (disableTimer) {
 		StartPlaying();	
 	}
 	
@@ -59,25 +66,24 @@ private var oldContactHeight = 0.0;
 private var newContactHeight = 0.0;
 private var contactDistance = 0.0;
 
-function OnCollisionEnter(collision : Collision) {
+function OnCollisionStay(collision : Collision) {
 	newContactHeight = collision.contacts[0].point.y;
 	contactDistance = oldContactHeight - newContactHeight;
 	
 	//Debug.Log("Old: " + oldContactHeight + ", New: " + newContactHeight + ", Distance: " + contactDistance);
 	
-	if (contactDistance > 2.9) {
+	if (contactDistance > breakingThreshold) {
 		deathTrigger = DeathTrigger.Broke;
 		Die();
 		return;
 	}
 	
-	if (contactDistance > 1.9 && !isDizzy) {
+	if (contactDistance > dizzyThreshold && !isDizzy) {
 		BecomeDizzy();
 		return;
 	}
 
 	oldContactHeight = newContactHeight;
-
 }
 
 function FixedUpdate() {
@@ -95,7 +101,7 @@ function Update () {
 				return;	
 			}
 		
-			if (!IsMainMenu()) {
+			if (!disableTimer) {
 				timeRemaining -= 1.0 * Time.deltaTime;
 			}
 						
@@ -172,6 +178,7 @@ function BecomeDizzy() {
 	audio.PlayOneShot(dizzySound);
 	var instantiatedDizziness : Object = Instantiate(dizziness, transform.position, transform.rotation);
 	yield WaitForSeconds(dizzyDuration);
+	Destroy(instantiatedDizziness);
 	isDizzy = false;
 }
 
@@ -193,8 +200,10 @@ function Die() {
 			
 			// TODO: Figure out how to make this work with pragma strict
 			var instantiatedExplosion : Object = Instantiate(explosion, transform.position, transform.rotation);
-			//Object.Destroy(instantiatedExplosion, 3);
-			//audio.PlayOneShot(breakingSound);
+			Destroy(guts);
+			Destroy(shadow);
+			yield WaitForSeconds(breakingDuration);
+			Destroy(instantiatedExplosion);
 			break;				
 	}
 }
@@ -261,7 +270,7 @@ function DrawDebugGUI() {
 }
 
 function DrawPlayingGUI() {
-	if (!IsMainMenu()){
+	if (!disableTimer){
 		//GUI.Label (Rect (0 ,20,Screen.width,50), "" + parseInt(Mathf.Ceil(timeRemaining)));
 
 		GUI.DrawTexture(Rect((Screen.width / 2) - 300, 8, 600, 16), timerBackground);		
@@ -270,7 +279,7 @@ function DrawPlayingGUI() {
 }
 
 function DrawWaitingGUI() {
-	if (!IsMainMenu()) {
+	if (!disableTimer) {
 		GUI.Label (Rect (0,10,Screen.width,50), levelName);
 		GUI.Label (Rect (0,50,Screen.width,50), "Level  " + levelTime + "  seconds");
 		if (!IsFirstLevel()) {
