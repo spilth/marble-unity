@@ -1,6 +1,7 @@
 .DS_Store
 obj
 Temp
+Assets/Incubator
 Library/ScriptAssemblies
 Library/cache
 Library/metadata
