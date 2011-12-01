@@ -1,4 +1,5 @@
 private var target : Transform;
+
 var distance = 1.0;
 
 var xSpeed = 250.0;

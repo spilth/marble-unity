@@ -11,7 +11,7 @@ function Awake() {
 function OnTriggerStay (other : Collider) {
   distance = Vector3.Distance(other.transform.position, transform.position);
   
-  if (!triggered && distance < 0.5) {
+  if (!triggered && distance < 0.75) {
 	if (other.gameObject == marble) {
 		triggered = true;
 		marbleScript.Finish();

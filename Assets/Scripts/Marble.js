@@ -96,6 +96,12 @@ function FixedUpdate() {
 function Update () {
 	switch(gameState) {
 		case GameState.Playing:
+		    if (Input.GetButtonDown("Suicide")) {
+		      deathTrigger = DeathTrigger.Broke;
+		      Die();
+		      return;
+		    }
+		
 			if (timeRemaining < 0.0) {
 				DieFromZeroTime();
 				return;	
@@ -111,7 +117,7 @@ function Update () {
 			}
 			
 			if (Application.isEditor) {
-				if (Input.GetKeyUp(KeyCode.T)) {
+				if (Input.GetButtonDown("TimeCheat")) {
 					AddTime(5.0);
 				}			
 			}
@@ -119,19 +125,19 @@ function Update () {
 			break;
 		
 		case GameState.Waiting:
-			if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonDown("Fire1")) {
+			if (Input.GetButtonDown("Accept")) {
 				StartPlaying();
 			}
 			break;
 			
 		case GameState.Finished:
-			if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonDown("Fire1")) {
+			if (Input.GetButtonDown("Accept")) {
 				LoadNextLevel();
 			}
 			break;
 			
 		case GameState.Dead:
-			if (Input.GetKeyUp(KeyCode.Space) || Input.GetButtonDown("Fire1")) {
+			if (Input.GetButtonDown("Accept")) {
 				Respawn();
 			}
 			break;
